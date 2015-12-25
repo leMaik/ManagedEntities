@@ -48,9 +48,9 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     public void kill() {
         if (entity instanceof Damageable) {
             ((Damageable) entity).setHealth(0);
-        entity=null;
+            entity = null;
         } else {
-        remove();
+            remove();
         }
     }
 
@@ -62,8 +62,8 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     @Override
     public void teleport(Location location) {
         this.location = location;
-        if (this.entity != null) {
-            this.location = location;
+        if (entity != null) {
+            entity.teleport(location);
         }
     }
 
