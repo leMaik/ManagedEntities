@@ -1,12 +1,17 @@
 package de.craften.plugins.managedentities;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import de.craften.plugins.managedentities.behavior.Behavior;
 import de.craften.plugins.managedentities.behavior.PropertyChangeAware;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * The abstract base for a managed entity.
@@ -15,7 +20,7 @@ import java.util.*;
  */
 public abstract class ManagedEntityBase<T extends Entity> implements ManagedEntity<T> {
     private final UUID id = UUID.randomUUID();
-    private final List<Behavior> behaviors = new ArrayList<>();
+    private final Multimap<Class<? extends Behavior>, Behavior> behaviors = ArrayListMultimap.create();
     private final Map<String, String> properties = new HashMap<>();
     private T entity;
     private Location location;
@@ -69,16 +74,21 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
 
     @Override
     public void addBehavior(Behavior behavior) {
-        behaviors.add(behavior);
+        behaviors.put(behavior.getClass(), behavior);
     }
 
     @Override
     public void removeBehavior(Behavior behavior) {
-        behaviors.remove(behavior);
+        behaviors.remove(behavior.getClass(), behavior);
+    }
+
+    @Override
+    public Collection<Behavior> getBehaviors(Class<? extends Behavior> behaviorType) {
+        return behaviors.get(behaviorType);
     }
 
     void tick() {
-        for (Behavior behavior : behaviors) {
+        for (Behavior behavior : behaviors.values()) {
             behavior.tick(this);
         }
     }
@@ -92,7 +102,7 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     public void setProperty(String key, String value) {
         properties.put(key, value);
 
-        for (Behavior behavior : behaviors) {
+        for (Behavior behavior : behaviors.values()) {
             if (behavior instanceof PropertyChangeAware) {
                 ((PropertyChangeAware) behavior).propertyChanged(this, key, value);
             }

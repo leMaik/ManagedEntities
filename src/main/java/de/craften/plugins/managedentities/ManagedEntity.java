@@ -4,6 +4,7 @@ import de.craften.plugins.managedentities.behavior.Behavior;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
+import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -60,6 +61,14 @@ public interface ManagedEntity<T extends Entity> {
      * @param behavior behavior to remove
      */
     void removeBehavior(Behavior behavior);
+
+    /**
+     * Gets all behaviors of the given type of this entity.
+     *
+     * @param behaviorType behavior type
+     * @return all behaviors of the given type
+     */
+    Collection<Behavior> getBehaviors(Class<? extends Behavior> behaviorType);
 
     /**
      * Gets the property with the given key.
