@@ -42,6 +42,13 @@ public interface ManagedEntity<T extends Entity> {
     void kill();
 
     /**
+     * Gets the location of this entity.
+     *
+     * @return location of this entity
+     */
+    Location getLocation();
+
+    /**
      * Teleport this entity to the given location.
      *
      * @param location target location

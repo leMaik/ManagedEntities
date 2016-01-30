@@ -71,6 +71,11 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     }
 
     @Override
+    public Location getLocation() {
+        return location;
+    }
+
+    @Override
     public void teleport(Location location) {
         this.location = location;
         if (entity != null) {

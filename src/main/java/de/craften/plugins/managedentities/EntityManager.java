@@ -34,4 +34,25 @@ public class EntityManager {
         entities.put(entity.getUniqueId(), entity);
         return entity;
     }
+
+    /**
+     * Gets the managed entity for the given entity, if it is managed.
+     *
+     * @param entity entity
+     * @param <T>    type of the entity
+     * @return managed entity for the given entity or null if the given entity is not managed
+     */
+    public <T extends Entity> ManagedEntity<T> getEntity(T entity) {
+        return entities.get(entity.getUniqueId());
+    }
+
+    /**
+     * Removes all entities.
+     */
+    public void removeAll() {
+        for (ManagedEntity entity : entities.values()) {
+            entity.remove();
+        }
+        entities.clear();
+    }
 }
