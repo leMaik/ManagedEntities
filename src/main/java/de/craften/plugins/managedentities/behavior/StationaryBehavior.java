@@ -6,6 +6,7 @@ import org.bukkit.Location;
 /**
  * A behavior that makes an entity stay at a location.
  */
+@Deprecated
 public class StationaryBehavior implements Behavior {
     private Location location;
     private boolean isTurningAllowed;

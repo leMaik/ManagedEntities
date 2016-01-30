@@ -4,9 +4,11 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import de.craften.plugins.managedentities.behavior.Behavior;
 import de.craften.plugins.managedentities.behavior.PropertyChangeAware;
+import de.craften.plugins.managedentities.util.nms.NmsEntityUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,6 +40,10 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     public void spawn() {
         if (entity == null) {
             entity = spawnEntity(location);
+
+            if (entity instanceof LivingEntity) {
+                NmsEntityUtil.disableAi((LivingEntity) entity);
+            }
         }
     }
 
