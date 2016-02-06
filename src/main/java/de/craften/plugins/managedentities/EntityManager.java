@@ -29,10 +29,29 @@ public class EntityManager {
         }, 0, 1);
     }
 
-    public <T extends Entity> ManagedEntity<T> spawn(Location location, Class<T> type) {
+    public <T extends Entity> ManagedEntity<T> create(Location location, Class<T> type) {
         ManagedEntityBase<T> entity = new GenericManagedEntity<>(location, type);
-        entities.put(entity.getUniqueId(), entity);
+        addEntity(entity);
         return entity;
+    }
+
+    /**
+     * Adds the given entity.
+     *
+     * @param entity entity to add
+     */
+    public void addEntity(ManagedEntityBase entity) {
+        entities.put(entity.getUniqueId(), entity);
+    }
+
+    /**
+     * Reoves the given entity from this manager and from the world.
+     *
+     * @param entity entity to remove
+     */
+    public void removeEntity(ManagedEntityBase entity) {
+        entities.remove(entity.getUniqueId());
+        entity.remove();
     }
 
     /**
