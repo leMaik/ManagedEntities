@@ -21,6 +21,7 @@ import java.util.UUID;
  * @param <T> type of the entity
  */
 public abstract class ManagedEntityBase<T extends Entity> implements ManagedEntity<T> {
+    EntityManager entityManager;
     private final UUID id = UUID.randomUUID();
     private final Multimap<Class<? extends Behavior>, Behavior> behaviors = ArrayListMultimap.create();
     private final Map<String, String> properties = new HashMap<>();
@@ -44,6 +45,10 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
             if (entity instanceof LivingEntity) {
                 NmsEntityUtil.disableAi((LivingEntity) entity);
             }
+
+            if (entityManager != null) {
+                entityManager.addMapping(entity, this);
+            }
         }
     }
 
@@ -51,6 +56,9 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     public void remove() {
         if (entity != null) {
             entity.remove();
+            if (entityManager != null) {
+                entityManager.removeMapping(entity);
+            }
             entity = null;
         }
     }
@@ -59,6 +67,9 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     public void kill() {
         if (entity instanceof Damageable) {
             ((Damageable) entity).setHealth(0);
+            if (entityManager != null) {
+                entityManager.removeMapping(entity);
+            }
             entity = null;
         } else {
             remove();

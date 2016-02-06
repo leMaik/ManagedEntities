@@ -4,17 +4,19 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A manager for entities.
  */
 public class EntityManager {
     private final Plugin plugin;
-    private final Map<UUID, ManagedEntityBase> entities = new HashMap<>();
+    private final List<ManagedEntityBase> entities = new CopyOnWriteArrayList<>();
+    private final Map<UUID, ManagedEntityBase> entityMappings = new HashMap<>();
 
     public EntityManager(Plugin plugin) {
         this.plugin = plugin;
@@ -22,7 +24,7 @@ public class EntityManager {
         plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
             @Override
             public void run() {
-                for (ManagedEntityBase entity : new ArrayList<>(entities.values())) {
+                for (ManagedEntityBase entity : entities) {
                     entity.tick();
                 }
             }
@@ -41,17 +43,28 @@ public class EntityManager {
      * @param entity entity to add
      */
     public void addEntity(ManagedEntityBase entity) {
-        entities.put(entity.getUniqueId(), entity);
+        entities.add(entity);
+        entity.entityManager = this;
     }
 
     /**
-     * Reoves the given entity from this manager and from the world.
+     * Removes the given entity from this manager and from the world.
      *
      * @param entity entity to remove
      */
     public void removeEntity(ManagedEntityBase entity) {
-        entities.remove(entity.getUniqueId());
+        entities.remove(entity);
         entity.remove();
+    }
+
+    /**
+     * Kills the given entity and removed it from this manager.
+     *
+     * @param entity entity to kill and remove
+     */
+    public void killAndRemoveEntity(ManagedEntityBase entity) {
+        entities.remove(entity);
+        entity.kill();
     }
 
     /**
@@ -62,16 +75,25 @@ public class EntityManager {
      * @return managed entity for the given entity or null if the given entity is not managed
      */
     public <T extends Entity> ManagedEntity<T> getEntity(T entity) {
-        return entities.get(entity.getUniqueId());
+        return entityMappings.get(entity.getUniqueId());
     }
 
     /**
      * Removes all entities.
      */
     public void removeAll() {
-        for (ManagedEntity entity : entities.values()) {
+        for (ManagedEntity entity : entities) {
             entity.remove();
         }
         entities.clear();
+        entityMappings.clear();
+    }
+
+    <T extends Entity> void addMapping(T entity, ManagedEntityBase managedEntity) {
+        entityMappings.put(entity.getUniqueId(), managedEntity);
+    }
+
+    <T extends Entity> void removeMapping(T entity) {
+        entityMappings.remove(entity.getUniqueId());
     }
 }
