@@ -24,4 +24,22 @@ public class NmsEntityUtil {
         tag.setInt("NoAI", 1);
         nmsEntity.f(tag);
     }
+
+    /**
+     * Sets whether the entity is invulnerable. This only blocks players in survival or adventure mode from hurting
+     * the entity.
+     *
+     * @param entity       entity
+     * @param invulnerable whether the entity should be invulnerable
+     */
+    public static void setInvulnerable(LivingEntity entity, boolean invulnerable) {
+        Entity nmsEntity = ((CraftEntity) entity).getHandle();
+        NBTTagCompound tag = nmsEntity.getNBTTag();
+        if (tag == null) {
+            tag = new NBTTagCompound();
+        }
+        nmsEntity.c(tag);
+        tag.setInt("Invulnerable", invulnerable ? 1 : 0);
+        nmsEntity.f(tag);
+    }
 }
