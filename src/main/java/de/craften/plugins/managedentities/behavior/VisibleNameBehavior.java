@@ -30,7 +30,8 @@ public class VisibleNameBehavior implements Behavior, PropertyChangeAware {
             nametag.setCustomName(entity.getProperty(NAME_PROPERTY_KEY));
         }
 
-        if (!nametag.getCustomName().equals(entity.getProperty(NAME_PROPERTY_KEY))) {
+        String name = nametag.getCustomName();
+        if (name == null || !nametag.getCustomName().equals(entity.getProperty(NAME_PROPERTY_KEY))) {
             nametag.setCustomName(entity.getEntity().getCustomName());
         }
 
