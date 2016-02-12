@@ -17,25 +17,27 @@ public class VisibleNameBehavior implements Behavior, PropertyChangeAware {
 
     @Override
     public void tick(ManagedEntityBase entity) {
-        Location nameTagLocation = entity.getEntity().getLocation().clone()
-                .add(0, EntityUtil.getEntityHeight(entity.getEntity()) + EntityUtil.NAME_TAG_HEIGHT + 0.1, 0);
+        String name = entity.getProperty(NAME_PROPERTY_KEY);
+        if (name != null && !name.trim().isEmpty()) {
+            Location nameTagLocation = entity.getEntity().getLocation().clone()
+                    .add(0, EntityUtil.getEntityHeight(entity.getEntity()) + EntityUtil.NAME_TAG_HEIGHT + 0.1, 0);
 
-        if (nametag == null) {
-            nametag = (ArmorStand) entity.getEntity().getWorld().spawnEntity(nameTagLocation, EntityType.ARMOR_STAND);
-            nametag.setCustomNameVisible(true);
-            nametag.setVisible(false);
-            nametag.setMarker(true);
-            nametag.setCanPickupItems(false);
-            nametag.setGravity(false);
-            nametag.setCustomName(entity.getProperty(NAME_PROPERTY_KEY));
+            if (nametag == null) {
+                nametag = (ArmorStand) entity.getEntity().getWorld().spawnEntity(nameTagLocation, EntityType.ARMOR_STAND);
+                nametag.setCustomNameVisible(true);
+                nametag.setVisible(false);
+                nametag.setMarker(true);
+                nametag.setCanPickupItems(false);
+                nametag.setGravity(false);
+                nametag.setCustomName(entity.getProperty(NAME_PROPERTY_KEY));
+            }
+
+            if (!name.equals(nametag.getCustomName())) {
+                nametag.setCustomName(entity.getEntity().getCustomName());
+            }
+
+            nametag.teleport(nameTagLocation);
         }
-
-        String name = nametag.getCustomName();
-        if (name == null || !nametag.getCustomName().equals(entity.getProperty(NAME_PROPERTY_KEY))) {
-            nametag.setCustomName(entity.getEntity().getCustomName());
-        }
-
-        nametag.teleport(nameTagLocation);
     }
 
     @Override
