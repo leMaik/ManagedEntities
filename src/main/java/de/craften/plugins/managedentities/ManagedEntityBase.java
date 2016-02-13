@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import de.craften.plugins.managedentities.behavior.Behavior;
 import de.craften.plugins.managedentities.behavior.PropertyChangeAware;
+import de.craften.plugins.managedentities.behavior.RemoveAware;
 import de.craften.plugins.managedentities.util.nms.NmsEntityUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
@@ -55,6 +56,12 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     @Override
     public void remove() {
         if (entity != null) {
+            for (Behavior behavior : behaviors.values()) {
+                if (behavior instanceof RemoveAware) {
+                    ((RemoveAware) behavior).onBeforeRemove(this);
+                }
+            }
+
             entity.remove();
             if (entityManager != null) {
                 entityManager.removeMapping(entity);
@@ -66,6 +73,12 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     @Override
     public void kill() {
         if (entity instanceof Damageable) {
+            for (Behavior behavior : behaviors.values()) {
+                if (behavior instanceof RemoveAware) {
+                    ((RemoveAware) behavior).onBeforeRemove(this);
+                }
+            }
+
             ((Damageable) entity).setHealth(0);
             if (entityManager != null) {
                 entityManager.removeMapping(entity);
