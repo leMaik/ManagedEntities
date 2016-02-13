@@ -11,7 +11,7 @@ import org.bukkit.entity.EntityType;
  * Behavior that makes the entity name always visible (using an armor stand). This behavior can only be used for one
  * entity at a time.
  */
-public class VisibleNameBehavior implements Behavior, PropertyChangeAware {
+public class VisibleNameBehavior implements Behavior, PropertyChangeAware, RemoveAware {
     public static final String NAME_PROPERTY_KEY = "name";
     private ArmorStand nametag;
 
@@ -51,6 +51,14 @@ public class VisibleNameBehavior implements Behavior, PropertyChangeAware {
                     nametag = null;
                 }
             }
+        }
+    }
+
+    @Override
+    public void onBeforeRemove(ManagedEntity entity) {
+        if (nametag != null) {
+            nametag.remove();
+            nametag = null;
         }
     }
 }

@@ -11,7 +11,7 @@ import org.bukkit.entity.EntityType;
  * Behavior that adds a second display name to an entity that is always visible (using an armor stand). This behavior
  * can only be used for one entity at a time. The second name can be set using the property `secondName` of the entity.
  */
-public class SecondNameBehavior implements Behavior, PropertyChangeAware {
+public class SecondNameBehavior implements Behavior, PropertyChangeAware, RemoveAware {
     public static final String NAME_PROPERTY_KEY = "secondName";
     private ArmorStand nametag;
 
@@ -51,6 +51,14 @@ public class SecondNameBehavior implements Behavior, PropertyChangeAware {
                     nametag = null;
                 }
             }
+        }
+    }
+
+    @Override
+    public void onBeforeRemove(ManagedEntity entity) {
+        if (nametag != null) {
+            nametag.remove();
+            nametag = null;
         }
     }
 }
