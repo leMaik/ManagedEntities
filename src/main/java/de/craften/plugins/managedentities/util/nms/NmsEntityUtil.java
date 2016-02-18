@@ -15,15 +15,27 @@ public class NmsEntityUtil {
      * Disables the AI for the given entity.
      *
      * @param entity entity
+     * @deprecated use {@link #setAi(LivingEntity, boolean)} instead
      */
+    @Deprecated
     public static void disableAi(LivingEntity entity) {
+        setAi(entity, false);
+    }
+
+    /**
+     * Sets whether the AI for the given entity is enabled. This also toggles gravity.
+     *
+     * @param entity entity
+     * @param hasAi  whether the entity should have an AI
+     */
+    public static void setAi(LivingEntity entity, boolean hasAi) {
         Entity nmsEntity = ((CraftEntity) entity).getHandle();
         NBTTagCompound tag = nmsEntity.getNBTTag();
         if (tag == null) {
             tag = new NBTTagCompound();
         }
         nmsEntity.c(tag);
-        tag.setInt("NoAI", 1);
+        tag.setInt("NoAI", hasAi ? 0 : 1);
         nmsEntity.f(tag);
     }
 
@@ -45,6 +57,13 @@ public class NmsEntityUtil {
         nmsEntity.f(tag);
     }
 
+    /**
+     * Sets the head rotation of the given entity.
+     *
+     * @param entity entity
+     * @param yaw    head yaw, in degree
+     * @param pitch  head pitch, in degree
+     */
     public static void setHeadRotation(LivingEntity entity, float yaw, float pitch) {
         EntityLiving nmsEntity = ((CraftLivingEntity) entity).getHandle();
         nmsEntity.f(clampYaw(yaw));
