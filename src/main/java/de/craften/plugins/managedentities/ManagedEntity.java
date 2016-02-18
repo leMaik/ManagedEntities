@@ -27,6 +27,20 @@ public interface ManagedEntity<T extends Entity> {
     UUID getUniqueId();
 
     /**
+     * Checks if this entity is frozen (has no AI and no gravity). Only works for living entities.
+     *
+     * @return true if this entity is frozen, false if not
+     */
+    boolean isFrozen();
+
+    /**
+     * Sets if this entity is frozen (has no AI and no gravity). Only works for living entities.
+     *
+     * @param frozen whether this entity is frozen, false if not
+     */
+    void setFrozen(boolean frozen);
+
+    /**
      * Spawn this entity.
      */
     void spawn();

@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * The abstract base for a managed entity.
+ * The abstract base for a managed entity. This entity is frozen by default.
  *
  * @param <T> type of the entity
  */
@@ -28,6 +28,7 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     private final Map<String, String> properties = new HashMap<>();
     private T entity;
     private Location location;
+    private boolean frozen = true;
 
     public ManagedEntityBase(Location location) {
         this.location = location;
@@ -39,11 +40,24 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     }
 
     @Override
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    @Override
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+        if (entity instanceof LivingEntity) {
+            NmsEntityUtil.setAi((LivingEntity) entity, !frozen);
+        }
+    }
+
+    @Override
     public void spawn() {
         if (entity == null) {
             entity = spawnEntity(location);
 
-            if (entity instanceof LivingEntity) {
+            if (entity instanceof LivingEntity && isFrozen()) {
                 NmsEntityUtil.disableAi((LivingEntity) entity);
             }
 
