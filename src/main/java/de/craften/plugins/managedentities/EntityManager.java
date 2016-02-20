@@ -25,10 +25,14 @@ public class EntityManager {
             @Override
             public void run() {
                 for (ManagedEntityBase entity : entities) {
-                    entity.tick();
+                    if (entity.getEntity() != null) {
+                        entity.tick();
+                    }
                 }
             }
         }, 0, 1);
+
+        plugin.getServer().getPluginManager().registerEvents(new EntityListener(this), plugin);
     }
 
     public <T extends Entity> ManagedEntity<T> create(Location location, Class<T> type) {

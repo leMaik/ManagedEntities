@@ -159,4 +159,19 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     }
 
     protected abstract T spawnEntity(Location location);
+
+    void onDeath() {
+        if (entity != null) {
+            for (Behavior behavior : behaviors.values()) {
+                if (behavior instanceof RemoveAware) {
+                    ((RemoveAware) behavior).onBeforeRemove(this);
+                }
+            }
+
+            if (entityManager != null) {
+                entityManager.removeMapping(entity);
+            }
+            entity = null;
+        }
+    }
 }
