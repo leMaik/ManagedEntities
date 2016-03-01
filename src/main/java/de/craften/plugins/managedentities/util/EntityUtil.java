@@ -21,6 +21,8 @@ public class EntityUtil {
         switch (entity.getType()) {
             case ARMOR_STAND:
                 return 1.8;
+            case TIPPED_ARROW:
+            case SPECTRAL_ARROW:
             case ARROW:
                 return 0.5;
             case BAT:
@@ -33,14 +35,14 @@ public class EntityUtil {
                 return 0.5;
             case CHICKEN:
                 return 0.7;
-            case COMPLEX_PART:
-                return 0;
             case COW:
                 return 1.3;
             case CREEPER:
                 return 1.8;
             case DROPPED_ITEM:
                 return 0.25;
+            case DRAGON_FIREBALL:
+                return 1;
             case EGG:
                 return 0.25;
             case ENDERMAN:
@@ -77,8 +79,6 @@ public class EntityUtil {
                 return 2.9;
             case ITEM_FRAME:
                 return 0.8;
-            case LEASH_HITCH:
-                return 0;
             case LIGHTNING:
                 return 1.8;
             case MAGMA_CUBE:
@@ -115,6 +115,10 @@ public class EntityUtil {
                 return 1; //TODO return correct size
             case SHEEP:
                 return 1.3;
+            case SHULKER:
+                return 1.0;
+            case SHULKER_BULLET:
+                return 0.25;
             case SILVERFISH:
                 return 0.3;
             case SKELETON:
@@ -139,8 +143,6 @@ public class EntityUtil {
                 return 1.8;
             case VILLAGER:
                 return 1.8;
-            case WEATHER:
-                return 0;
             case WITCH:
                 return 1.8;
             case WITHER:
