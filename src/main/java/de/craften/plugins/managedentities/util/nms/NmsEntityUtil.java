@@ -12,17 +12,6 @@ import org.bukkit.entity.LivingEntity;
  */
 public class NmsEntityUtil {
     /**
-     * Disables the AI for the given entity.
-     *
-     * @param entity entity
-     * @deprecated use {@link #setAi(LivingEntity, boolean)} instead
-     */
-    @Deprecated
-    public static void disableAi(LivingEntity entity) {
-        setAi(entity, false);
-    }
-
-    /**
      * Sets whether the AI for the given entity is enabled. This also toggles gravity.
      *
      * @param entity entity
