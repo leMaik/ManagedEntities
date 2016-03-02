@@ -87,17 +87,7 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     @Override
     public void kill() {
         if (entity instanceof Damageable) {
-            for (Behavior behavior : behaviors.values()) {
-                if (behavior instanceof RemoveAware) {
-                    ((RemoveAware) behavior).onBeforeRemove(this);
-                }
-            }
-
-            ((Damageable) entity).setHealth(0);
-            if (entityManager != null) {
-                entityManager.removeMapping(entity);
-            }
-            entity = null;
+            ((Damageable) entity).damage(Double.MAX_VALUE);
         } else {
             remove();
         }
