@@ -87,7 +87,10 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     @Override
     public void kill() {
         if (entity instanceof Damageable) {
-            ((Damageable) entity).damage(Double.MAX_VALUE);
+            if (entity instanceof LivingEntity) {
+                NmsEntityUtil.setInvulnerable((LivingEntity) entity, false);
+            }
+            ((Damageable) entity).damage(((Damageable) entity).getHealth());
         } else {
             remove();
         }
