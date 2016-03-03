@@ -44,6 +44,7 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
 
             if (entity instanceof LivingEntity) {
                 NmsEntityUtil.disableAi((LivingEntity) entity);
+                ((LivingEntity) entity).setRemoveWhenFarAway(false); //TODO this affects performance and should be optimized later (manual tracking of far away entities)
             }
 
             if (entityManager != null) {
