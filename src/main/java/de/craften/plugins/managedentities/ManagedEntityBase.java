@@ -124,9 +124,10 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
         behaviors.remove(behavior.getClass(), behavior);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Collection<Behavior> getBehaviors(Class<? extends Behavior> behaviorType) {
-        return behaviors.get(behaviorType);
+    public <B extends Behavior> Collection<B> getBehaviors(Class<B> behaviorType) {
+        return (Collection<B>) behaviors.get(behaviorType);
     }
 
     void tick() {

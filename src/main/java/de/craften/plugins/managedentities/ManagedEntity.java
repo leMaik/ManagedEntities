@@ -87,9 +87,10 @@ public interface ManagedEntity<T extends Entity> {
      * Gets all behaviors of the given type of this entity.
      *
      * @param behaviorType behavior type
+     * @param <B>          behavior type
      * @return all behaviors of the given type
      */
-    Collection<Behavior> getBehaviors(Class<? extends Behavior> behaviorType);
+    <B extends Behavior> Collection<B> getBehaviors(Class<B> behaviorType);
 
     /**
      * Gets the property with the given key.
