@@ -78,6 +78,7 @@ public class EntityManager {
      * @param <T>    type of the entity
      * @return managed entity for the given entity or null if the given entity is not managed
      */
+    @SuppressWarnings("unchecked")
     public <T extends Entity> ManagedEntity<T> getEntity(T entity) {
         return entityMappings.get(entity.getUniqueId());
     }

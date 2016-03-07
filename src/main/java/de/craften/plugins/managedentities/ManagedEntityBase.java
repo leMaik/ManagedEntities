@@ -58,7 +58,7 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
             entity = spawnEntity(location);
 
             if (entity instanceof LivingEntity && isFrozen()) {
-                NmsEntityUtil.disableAi((LivingEntity) entity);
+                NmsEntityUtil.setAi((LivingEntity) entity, false);
             }
 
             if (entityManager != null) {
