@@ -35,7 +35,15 @@ public class EntityManager {
         plugin.getServer().getPluginManager().registerEvents(new EntityListener(this), plugin);
     }
 
-    public <T extends Entity> ManagedEntity<T> create(Location location, Class<T> type) {
+    /**
+     * Create a managed entity of the given type at the given location.
+     *
+     * @param location location
+     * @param type     entity type
+     * @param <T>      entity type
+     * @return managed entity
+     */
+    public <T extends Entity> ManagedEntityBase<T> create(Location location, Class<T> type) {
         ManagedEntityBase<T> entity = new GenericManagedEntity<>(location, type);
         addEntity(entity);
         return entity;
