@@ -25,13 +25,25 @@ public class EntityManager {
             @Override
             public void run() {
                 for (ManagedEntityBase entity : entities) {
-                    entity.tick();
+                    if (entity.getEntity() != null) {
+                        entity.tick();
+                    }
                 }
             }
         }, 0, 1);
+
+        plugin.getServer().getPluginManager().registerEvents(new EntityListener(this), plugin);
     }
 
-    public <T extends Entity> ManagedEntity<T> create(Location location, Class<T> type) {
+    /**
+     * Create a managed entity of the given type at the given location.
+     *
+     * @param location location
+     * @param type     entity type
+     * @param <T>      entity type
+     * @return managed entity
+     */
+    public <T extends Entity> ManagedEntityBase<T> create(Location location, Class<T> type) {
         ManagedEntityBase<T> entity = new GenericManagedEntity<>(location, type);
         addEntity(entity);
         return entity;
@@ -74,6 +86,7 @@ public class EntityManager {
      * @param <T>    type of the entity
      * @return managed entity for the given entity or null if the given entity is not managed
      */
+    @SuppressWarnings("unchecked")
     public <T extends Entity> ManagedEntity<T> getEntity(T entity) {
         return entityMappings.get(entity.getUniqueId());
     }

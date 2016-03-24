@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import de.craften.plugins.managedentities.behavior.Behavior;
 import de.craften.plugins.managedentities.behavior.PropertyChangeAware;
+import de.craften.plugins.managedentities.behavior.RemoveAware;
 import de.craften.plugins.managedentities.util.nms.NmsEntityUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * The abstract base for a managed entity.
+ * The abstract base for a managed entity. This entity is frozen by default.
  *
  * @param <T> type of the entity
  */
@@ -27,6 +28,7 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     private final Map<String, String> properties = new HashMap<>();
     private T entity;
     private Location location;
+    private boolean frozen = true;
 
     public ManagedEntityBase(Location location) {
         this.location = location;
@@ -38,13 +40,29 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     }
 
     @Override
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    @Override
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+        if (entity instanceof LivingEntity) {
+            NmsEntityUtil.setAi((LivingEntity) entity, !frozen);
+        }
+    }
+
+    @Override
     public void spawn() {
         if (entity == null) {
             entity = spawnEntity(location);
 
             if (entity instanceof LivingEntity) {
-                NmsEntityUtil.disableAi((LivingEntity) entity);
-                ((LivingEntity) entity).setRemoveWhenFarAway(false); //TODO this affects performance and should be optimized later (manual tracking of far away entities)
+                ((LivingEntity) entity).setRemoveWhenFarAway(false);
+
+                if (isFrozen()) {
+                    NmsEntityUtil.setAi((LivingEntity) entity, false);
+                }
             }
 
             if (entityManager != null) {
@@ -56,6 +74,12 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     @Override
     public void remove() {
         if (entity != null) {
+            for (Behavior behavior : behaviors.values()) {
+                if (behavior instanceof RemoveAware) {
+                    ((RemoveAware) behavior).onBeforeRemove(this);
+                }
+            }
+
             entity.remove();
             if (entityManager != null) {
                 entityManager.removeMapping(entity);
@@ -67,11 +91,10 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     @Override
     public void kill() {
         if (entity instanceof Damageable) {
-            ((Damageable) entity).setHealth(0);
-            if (entityManager != null) {
-                entityManager.removeMapping(entity);
+            if (entity instanceof LivingEntity) {
+                NmsEntityUtil.setInvulnerable((LivingEntity) entity, false);
             }
-            entity = null;
+            ((Damageable) entity).damage(((Damageable) entity).getHealth());
         } else {
             remove();
         }
@@ -105,9 +128,10 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
         behaviors.remove(behavior.getClass(), behavior);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Collection<Behavior> getBehaviors(Class<? extends Behavior> behaviorType) {
-        return behaviors.get(behaviorType);
+    public <B extends Behavior> Collection<B> getBehaviors(Class<B> behaviorType) {
+        return (Collection<B>) behaviors.get(behaviorType);
     }
 
     void tick() {
@@ -133,4 +157,19 @@ public abstract class ManagedEntityBase<T extends Entity> implements ManagedEnti
     }
 
     protected abstract T spawnEntity(Location location);
+
+    void onDeath() {
+        if (entity != null) {
+            for (Behavior behavior : behaviors.values()) {
+                if (behavior instanceof RemoveAware) {
+                    ((RemoveAware) behavior).onBeforeRemove(this);
+                }
+            }
+
+            if (entityManager != null) {
+                entityManager.removeMapping(entity);
+            }
+            entity = null;
+        }
+    }
 }

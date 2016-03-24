@@ -116,7 +116,7 @@ public class EntityUtil {
             case SHEEP:
                 return 1.3;
             case SILVERFISH:
-                return 0.7;
+                return 0.3;
             case SKELETON:
                 return 1.8;
             case SLIME:

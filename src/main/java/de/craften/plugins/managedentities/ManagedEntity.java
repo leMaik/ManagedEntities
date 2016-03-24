@@ -27,6 +27,20 @@ public interface ManagedEntity<T extends Entity> {
     UUID getUniqueId();
 
     /**
+     * Checks if this entity is frozen (has no AI and no gravity). Only works for living entities.
+     *
+     * @return true if this entity is frozen, false if not
+     */
+    boolean isFrozen();
+
+    /**
+     * Sets if this entity is frozen (has no AI and no gravity). Only works for living entities.
+     *
+     * @param frozen whether this entity is frozen, false if not
+     */
+    void setFrozen(boolean frozen);
+
+    /**
      * Spawn this entity.
      */
     void spawn();
@@ -73,9 +87,10 @@ public interface ManagedEntity<T extends Entity> {
      * Gets all behaviors of the given type of this entity.
      *
      * @param behaviorType behavior type
+     * @param <B>          behavior type
      * @return all behaviors of the given type
      */
-    Collection<Behavior> getBehaviors(Class<? extends Behavior> behaviorType);
+    <B extends Behavior> Collection<B> getBehaviors(Class<B> behaviorType);
 
     /**
      * Gets the property with the given key.
