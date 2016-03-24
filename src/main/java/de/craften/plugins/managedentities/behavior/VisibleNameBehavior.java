@@ -17,26 +17,28 @@ public class VisibleNameBehavior implements Behavior, PropertyChangeAware, Remov
 
     @Override
     public void tick(ManagedEntityBase entity) {
-        String name = entity.getProperty(NAME_PROPERTY_KEY);
-        if (name != null && !name.trim().isEmpty()) {
-            Location nameTagLocation = entity.getEntity().getLocation().clone()
-                    .add(0, EntityUtil.getEntityHeight(entity.getEntity()) + EntityUtil.NAME_TAG_HEIGHT + 0.1, 0);
+        if (entity.getEntity() != null) {
+            String name = entity.getProperty(NAME_PROPERTY_KEY);
+            if (name != null && !name.trim().isEmpty()) {
+                Location nameTagLocation = entity.getEntity().getLocation().clone()
+                        .add(0, EntityUtil.getEntityHeight(entity.getEntity()) + EntityUtil.NAME_TAG_HEIGHT + 0.1, 0);
 
-            if (nametag == null) {
-                nametag = (ArmorStand) entity.getEntity().getWorld().spawnEntity(nameTagLocation, EntityType.ARMOR_STAND);
-                nametag.setCustomNameVisible(true);
-                nametag.setVisible(false);
-                nametag.setMarker(true);
-                nametag.setCanPickupItems(false);
-                nametag.setGravity(false);
-                nametag.setCustomName(entity.getProperty(NAME_PROPERTY_KEY));
+                if (nametag == null) {
+                    nametag = (ArmorStand) entity.getEntity().getWorld().spawnEntity(nameTagLocation, EntityType.ARMOR_STAND);
+                    nametag.setCustomNameVisible(true);
+                    nametag.setVisible(false);
+                    nametag.setMarker(true);
+                    nametag.setCanPickupItems(false);
+                    nametag.setGravity(false);
+                    nametag.setCustomName(entity.getProperty(NAME_PROPERTY_KEY));
+                }
+
+                if (!name.equals(nametag.getCustomName())) {
+                    nametag.setCustomName(entity.getEntity().getCustomName());
+                }
+
+                nametag.teleport(nameTagLocation);
             }
-
-            if (!name.equals(nametag.getCustomName())) {
-                nametag.setCustomName(entity.getEntity().getCustomName());
-            }
-
-            nametag.teleport(nameTagLocation);
         }
     }
 
