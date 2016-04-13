@@ -4,23 +4,17 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A manager for entities.
  */
 public class EntityManager {
-    private final Plugin plugin;
     private final List<ManagedEntityBase> entities = new CopyOnWriteArrayList<>();
     private final Map<UUID, ManagedEntityBase> entityMappings = new HashMap<>();
 
     public EntityManager(Plugin plugin) {
-        this.plugin = plugin;
-
         plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
             @Override
             public void run() {
@@ -89,6 +83,36 @@ public class EntityManager {
     @SuppressWarnings("unchecked")
     public <T extends Entity> ManagedEntity<T> getEntity(T entity) {
         return entityMappings.get(entity.getUniqueId());
+    }
+
+    /**
+     * Get all managed entities.
+     *
+     * @return all managed entities
+     */
+    public Collection<ManagedEntityBase> getEntities() {
+        return entityMappings.values();
+    }
+
+    /**
+     * Get all managed entities in the given radius near the given location.
+     *
+     * @param location location
+     * @param radius   radius
+     * @return all managed entities
+     */
+    public Collection<ManagedEntityBase> getEntitiesNear(Location location, double radius) {
+        List<ManagedEntityBase> entities = new ArrayList<>();
+        double radiusSquared = radius * radius;
+
+        for (ManagedEntityBase entityBase : getEntities()) {
+            if (entityBase.getLocation().getWorld().equals(location.getWorld())
+                    && entityBase.getLocation().distanceSquared(location) <= radiusSquared) {
+                entities.add(entityBase);
+            }
+        }
+
+        return entities;
     }
 
     /**
