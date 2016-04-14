@@ -95,7 +95,7 @@ public class EntityManager {
     }
 
     /**
-     * Get all managed entities in the given radius near the given location.
+     * Get all spawned managed entities in the given radius near the given location.
      *
      * @param location location
      * @param radius   radius
@@ -105,10 +105,11 @@ public class EntityManager {
         List<ManagedEntityBase> entities = new ArrayList<>();
         double radiusSquared = radius * radius;
 
-        for (ManagedEntityBase entityBase : getEntities()) {
-            if (entityBase.getLocation().getWorld().equals(location.getWorld())
-                    && entityBase.getLocation().distanceSquared(location) <= radiusSquared) {
-                entities.add(entityBase);
+        for (ManagedEntityBase managedEntity : getEntities()) {
+            Entity entity = managedEntity.getEntity();
+            if (entity != null && entity.getLocation().getWorld().equals(location.getWorld())
+                    && entity.getLocation().distanceSquared(location) <= radiusSquared) {
+                entities.add(managedEntity);
             }
         }
 
